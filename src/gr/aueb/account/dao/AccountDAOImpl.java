@@ -19,12 +19,13 @@ public class AccountDAOImpl implements IAccountDAO{
 
     @Override
     public Account update(Long id, Account account) {
-        return null;
+        accounts.set(getIndexById(id), account);
+        return account;
     }
 
     @Override
     public void deleteById(Long id) {
-
+        accounts.removeIf(account -> account.getId().equals(id));
     }
 
     private int getIndexById(Long id) {
@@ -40,43 +41,75 @@ public class AccountDAOImpl implements IAccountDAO{
         return positionToReturn;
     }
 
+    private int getIndexByIban(String iban) {
+        int positionToReturn = -1;
+
+        for (int i = 0; i < accounts.size(); i++) {
+            if (accounts.get(i).getIban().equals(iban)) {
+                positionToReturn = i;
+                break;
+            }
+        }
+
+        return positionToReturn;
+    }
+
+    private int getIndexBySsn(String ssn) {
+        int positionToReturn = -1;
+
+        for (int i = 0; i < accounts.size(); i++) {
+            if (accounts.get(i).getSsn().equals(ssn)) {
+                positionToReturn = i;
+                break;
+            }
+        }
+
+        return positionToReturn;
+    }
+
     @Override
     public Account getById(Long id) {
-        return null;
+        int position = getIndexById(id);
+        return (position != -1) ? accounts.get(getIndexById(id)) : null;
     }
 
     @Override
     public List<Account> getAll() {
-        return List.of();
+        return new ArrayList<>(accounts);
     }
 
     @Override
     public void deleteBySsn(String ssn) {
-
+        accounts.removeIf(account -> account.getSsn().equals(ssn));
     }
 
     @Override
     public Account getByIban(String iban) {
-        return null;
+        int position = getIndexByIban(iban);
+        return (position != -1) ? accounts.get(getIndexByIban(iban)) : null;
     }
 
     @Override
     public Account getBySsn(String ssn) {
-        return null;
+        int position = getIndexBySsn(ssn);
+        return (position != -1) ? accounts.get(getIndexBySsn(ssn)) : null;
     }
 
     @Override
     public boolean userIdExists(Long id) {
-        return false;
+        int position = getIndexById(id);
+        return position != -1;
     }
 
     @Override
     public boolean ssnExists(String ssn) {
-        return false;
+        int position = getIndexBySsn(ssn);
+        return position != -1;
     }
 
     @Override
     public boolean ibanExists(String iban) {
-        return false;
+        int position = getIndexByIban(iban);
+        return position != -1;
     }
 }
